@@ -38,11 +38,16 @@ public class BasicGameApp implements Runnable {
    public JPanel panel;
    
 	public BufferStrategy bufferStrategy;
-	public Image astroPic;
+	public Image rockPic;
+    public Image paperPic;
+    public Image scissorsPic;
 
    //Declare the objects used in the program
    //These are things that are made up of more than one variable type
-	private Astronaut astro;
+	public Rock rock1;
+    public Paper paper1;
+    public Scissors scissors1;
+
 
 
    // Main method definition
@@ -63,8 +68,12 @@ public class BasicGameApp implements Runnable {
        
       //variable and objects
       //create (construct) the objects needed for the game and load up 
-		astroPic = Toolkit.getDefaultToolkit().getImage("astronaut.png"); //load the picture
-		astro = new Astronaut(10,100);
+		rockPic = Toolkit.getDefaultToolkit().getImage("rock.jpg"); //load the picture
+		rock1 = new Rock(10,100);
+        paperPic = Toolkit.getDefaultToolkit().getImage("paper.png"); //load the picture
+        paper1 = new Paper(10,200);
+        scissorsPic = Toolkit.getDefaultToolkit().getImage("scissors.jpg"); //load the picture
+        scissors1 = new Scissors(10,300);
 
 
 	}// BasicGameApp()
@@ -92,7 +101,9 @@ public class BasicGameApp implements Runnable {
 	public void moveThings()
 	{
       //calls the move( ) code in the objects
-		astro.move();
+		rock1.move();
+        paper1.move();
+        scissors1.move();
 
 	}
 	
@@ -143,9 +154,12 @@ public class BasicGameApp implements Runnable {
 		g.clearRect(0, 0, WIDTH, HEIGHT);
 
       //draw the image of the astronaut
-		g.drawImage(astroPic, astro.xpos, astro.ypos, astro.width, astro.height, null);
+		g.drawImage(rockPic, rock1.xpos, rock1.ypos, rock1.width, rock1.height, null);
+        g.drawImage(paperPic, paper1.xpos, paper1.ypos, paper1.width, paper1.height, null);
+            g.drawImage(scissorsPic, scissors1.xpos, scissors1.ypos, scissors1.width, scissors1.height, null);
 
-		g.dispose();
+
+        g.dispose();
 
 		bufferStrategy.show();
 	}
