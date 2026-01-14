@@ -41,8 +41,10 @@ public class BasicGameApp implements Runnable {
 	public Image rockPic;
     public Image paperPic;
     public Image scissorsPic;
+    public Image backgroundPic;
 
-   //Declare the objects used in the program
+
+    //Declare the objects used in the program
    //These are things that are made up of more than one variable type
 	public Rock rock1;
     public Paper paper1;
@@ -69,14 +71,16 @@ public class BasicGameApp implements Runnable {
       //variable and objects
       //create (construct) the objects needed for the game and load up 
 		rockPic = Toolkit.getDefaultToolkit().getImage("rock.jpg"); //load the picture
-		rock1 = new Rock(10,100);
+		rock1 = new Rock((int)(Math.random()*900)+1,(int)(Math.random()*600)+1);
         paperPic = Toolkit.getDefaultToolkit().getImage("paper.png"); //load the picture
-        paper1 = new Paper(10,200);
+        paper1 = new Paper((int)(Math.random()*900)+1,(int)(Math.random()*600)+1);
         scissorsPic = Toolkit.getDefaultToolkit().getImage("scissors.jpg"); //load the picture
-        scissors1 = new Scissors(10,300);
+        scissors1 = new Scissors((int)(Math.random()*900)+1,(int)(Math.random()*600)+1);
+        backgroundPic = Toolkit.getDefaultToolkit().getImage("Table.jpg");//load the picture
 
 
-	}// BasicGameApp()
+
+    }// BasicGameApp()
 
    
 //*******************************************************************************
@@ -104,8 +108,35 @@ public class BasicGameApp implements Runnable {
 		rock1.move();
         paper1.move();
         scissors1.move();
+        crashing();
 
 	}
+    public void crashing() {
+
+        if (paper1.hitbox.intersects(rock1.hitbox)&& rock1.isAlive == true) {
+            System.out.println("Rock/paper hit");
+            rock1.isAlive = false;
+            paper1.isAlive = true;
+            paper1.height = 200;
+            paper1.width = 200;
+        }
+        if (rock1.hitbox.intersects(scissors1.hitbox)&& scissors1.isAlive == true) {
+            System.out.println("Rock/scissors hit");
+            scissors1.isAlive = false;
+            rock1.isAlive = true;
+            rock1.height = 200;
+            rock1.width = 200;
+        }
+        if (scissors1.hitbox.intersects(paper1.hitbox)&& paper1.isAlive == true) {
+            System.out.println("scissors/paper hit");
+            paper1.isAlive = false;
+            scissors1.isAlive = true;
+            scissors1.height = 200;
+            scissors1.width = 200;
+        }
+    }
+
+
 	
    //Pauses or sleeps the computer for the amount specified in milliseconds
    public void pause(int time ){
@@ -116,6 +147,7 @@ public class BasicGameApp implements Runnable {
 
 			}
    }
+
 
    //Graphics setup method
    private void setUpGraphics() {
@@ -148,15 +180,25 @@ public class BasicGameApp implements Runnable {
    }
 
 
+
 	//paints things on the screen using bufferStrategy
 	private void render() {
 		Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
 		g.clearRect(0, 0, WIDTH, HEIGHT);
+        g.drawImage(backgroundPic, 0, 0, WIDTH,HEIGHT , null);
 
-      //draw the image of the astronaut
-		g.drawImage(rockPic, rock1.xpos, rock1.ypos, rock1.width, rock1.height, null);
-        g.drawImage(paperPic, paper1.xpos, paper1.ypos, paper1.width, paper1.height, null);
+
+        //draw the image of the astronaut
+        if (rock1.isAlive == true) {
+            g.drawImage(rockPic, rock1.xpos, rock1.ypos, rock1.width, rock1.height, null);
+        }
+        if (paper1.isAlive == true) {
+            g.drawImage(paperPic, paper1.xpos, paper1.ypos, paper1.width, paper1.height, null);
+        }
+        if (scissors1.isAlive == true) {
             g.drawImage(scissorsPic, scissors1.xpos, scissors1.ypos, scissors1.width, scissors1.height, null);
+        }
+
 
 
         g.dispose();
