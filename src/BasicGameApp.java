@@ -42,6 +42,11 @@ public class BasicGameApp implements Runnable {
     public Image paperPic;
     public Image scissorsPic;
     public Image backgroundPic;
+    public Image rockWinPic;
+    public Image paperWinPic;
+    public Image scissorsWinPic;
+    public boolean gameOver = false;
+    public String winner = "";
 
 
     //Declare the objects used in the program
@@ -77,6 +82,9 @@ public class BasicGameApp implements Runnable {
         scissorsPic = Toolkit.getDefaultToolkit().getImage("scissors.jpg"); //load the picture
         scissors1 = new Scissors((int)(Math.random()*900)+1,(int)(Math.random()*600)+1);
         backgroundPic = Toolkit.getDefaultToolkit().getImage("Table.jpg");//load the picture
+        rockWinPic = Toolkit.getDefaultToolkit().getImage("rockWins.png");
+        paperWinPic = Toolkit.getDefaultToolkit().getImage("paperWins.png");
+        scissorsWinPic = Toolkit.getDefaultToolkit().getImage("scissorsWins.png");
 
 
 
@@ -197,6 +205,20 @@ public class BasicGameApp implements Runnable {
         }
         if (scissors1.isAlive == true) {
             g.drawImage(scissorsPic, scissors1.xpos, scissors1.ypos, scissors1.width, scissors1.height, null);
+        }
+        if (gameOver) {
+
+            if (winner.equals("ROCK")) {
+                g.drawImage(rockWinPic, 250, 200, 500, 200, null);
+            }
+
+            if (winner.equals("PAPER")) {
+                g.drawImage(paperWinPic, 250, 200, 500, 200, null);
+            }
+
+            if (winner.equals("SCISSORS")) {
+                g.drawImage(scissorsWinPic, 250, 200, 500, 200, null);
+            }
         }
 
 

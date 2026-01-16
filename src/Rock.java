@@ -26,8 +26,8 @@ public class Rock {
     public Rock(int pXpos, int pYpos) {
         xpos = pXpos;
         ypos = pYpos;
-        dx =5;
-        dy =5;
+        dx = 5;
+        dy = 5;
         width = 100;
         height = 100;
         isAlive = true;
@@ -38,25 +38,32 @@ public class Rock {
 
     //The move method.  Everytime this is run (or "called") the hero's x position and y position change by dx and dy
     public void move() {
-        if(xpos < 0) { //bounce off left wall
-            dx = -dx;
+
+        if (isAlive) {
+
+            if (xpos < 0) { // bounce off left wall
+                dx = -dx;
+            }
+            if (ypos < 0) {
+                dy = -dy;
+            }
+
+            if (xpos > 1000 - width) {
+                dx = -dx;
+            }
+            if (ypos > 700 - height) {
+                dy = -dy;
+            }
+
+            xpos = xpos + dx;
+            ypos = ypos + dy;
+
+            hitbox = new Rectangle(xpos, ypos, width, height);
+
+        } else {
+
+            hitbox = new Rectangle(0, 0, 0, 0);
+
         }
-        if(ypos < 0) {
-            dy = -dy;
-        }
-
-        if(xpos > 1000-width) {
-            dx = -dx;
-        }
-        if(ypos > 700-height) {
-            dy = -dy;
-        }
-
-        xpos = xpos + dx;
-        ypos = ypos + dy;
-        hitbox = new Rectangle(xpos, ypos, width, height);
-
-
-
     }
 }
