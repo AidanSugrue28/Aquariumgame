@@ -46,7 +46,7 @@ public class BasicGameApp implements Runnable {
     public Image paperWinPic;
     public Image scissorsWinPic;
     public boolean gameOver = false;
-    public String winner = "";
+    public String winner  = "";
 
 
     //Declare the objects used in the program
