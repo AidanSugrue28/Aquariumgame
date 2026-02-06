@@ -26,45 +26,47 @@ public class Scissors {
     public Scissors(int pXpos, int pYpos) {
         xpos = pXpos;
         ypos = pYpos;
-        dx =5;
-        dy =5;
-        width = 40;
-        height = 40;
+        dx = 5;
+        dy = 5;
+        width = 100;
+        height = 100;
         isAlive = true;
         hitbox = new Rectangle(xpos, ypos, width, height);
 
 
     }// constructor
 
-    //The move method.  Everytime this is run (or "called") the hero's x position and y position change by dx and dy
+    //The move method.  Everytime this is run (or "called") it wraps and goes back to the opposite side
     public void move() {
 
         if (isAlive) {
 
-            if (xpos < 0) { // bounce off left wall
-                dx = -dx;
+            xpos += dx;
+            ypos += dy;
+
+            // wrap horizontally
+            if (xpos < -width) {
+                xpos = 900;
             }
-            if (ypos < 0) {
-                dy = -dy;
+            if (xpos > 900) {
+                xpos = -width;
             }
 
-            if (xpos > 900 - width) {
-                dx = -dx;
+            // wrap vertically
+            if (ypos < -height) {
+                ypos = 600;
             }
-            if (ypos > 600 - height) {
-                dy = -dy;
+            if (ypos > 600) {
+                ypos = -height;
             }
-
-            xpos = xpos + dx;
-            ypos = ypos + dy;
 
             hitbox = new Rectangle(xpos, ypos, width, height);
 
         } else {
-
             hitbox = new Rectangle(0, 0, 0, 0);
-
         }
     }
 }
+
+
 

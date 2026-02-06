@@ -28,8 +28,8 @@ public class Paper {
         ypos = pYpos;
         dx =5;
         dy =5;
-        width = 40;
-        height = 40;
+        width = 100;
+        height = 100;
         isAlive = true;
         hitbox = new Rectangle(xpos, ypos, width, height);
 

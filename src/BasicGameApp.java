@@ -35,7 +35,7 @@ public class BasicGameApp implements Runnable {
    //Declare the variables needed for the graphics
 	public JFrame frame;
 	public Canvas canvas;
-   public JPanel panel;
+    public JPanel panel;
    
 	public BufferStrategy bufferStrategy;
 	public Image rockPic;
@@ -76,11 +76,11 @@ public class BasicGameApp implements Runnable {
       //variable and objects
       //create (construct) the objects needed for the game and load up
 		rockPic = Toolkit.getDefaultToolkit().getImage("rock.jpg"); //load the picture
-		rock1 = new Rock((int)(Math.random()*900)+1,(int)(Math.random()*600)+1);
+		rock1 = new Rock((int)(Math.random()*700)+1,(int)(Math.random()*500)+1);
         paperPic = Toolkit.getDefaultToolkit().getImage("paper.png"); //load the picture
-        paper1 = new Paper((int)(Math.random()*900)+1,(int)(Math.random()*600)+1);
+        paper1 = new Paper((int)(Math.random()*700)+1,(int)(Math.random()*500)+1);
         scissorsPic = Toolkit.getDefaultToolkit().getImage("scissors.jpg"); //load the picture
-        scissors1 = new Scissors((int)(Math.random()*900)+1,(int)(Math.random()*600)+1);
+        scissors1 = new Scissors((int)(Math.random()*700)+1,(int)(Math.random()*500)+1);
         backgroundPic = Toolkit.getDefaultToolkit().getImage("Table.jpg");//load the picture
         rockWinPic = Toolkit.getDefaultToolkit().getImage("rockWins.png");
         paperWinPic = Toolkit.getDefaultToolkit().getImage("paperWins.png");
@@ -127,22 +127,22 @@ public class BasicGameApp implements Runnable {
             System.out.println("Rock/paper hit");
             rock1.isAlive = false;
             paper1.isAlive = true;
-            paper1.height = 200;
-            paper1.width = 200;
+            paper1.height = 150;
+            paper1.width = 150;
         }
         if (rock1.hitbox.intersects(scissors1.hitbox)&& scissors1.isAlive == true) {
             System.out.println("Rock/scissors hit");
             scissors1.isAlive = false;
             rock1.isAlive = true;
-            rock1.height = 200;
-            rock1.width = 200;
+            rock1.height = 150;
+            rock1.width = 150;
         }
         if (scissors1.hitbox.intersects(paper1.hitbox)&& paper1.isAlive == true) {
             System.out.println("scissors/paper hit");
             paper1.isAlive = false;
             scissors1.isAlive = true;
-            scissors1.height = 200;
-            scissors1.width = 200;
+            scissors1.height = 150;
+            scissors1.width = 150;
         }
 
         int aliveCount = 0;
