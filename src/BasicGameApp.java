@@ -74,7 +74,7 @@ public class BasicGameApp implements Runnable {
       setUpGraphics();
        
       //variable and objects
-      //create (construct) the objects needed for the game and load up 
+      //create (construct) the objects needed for the game and load up
 		rockPic = Toolkit.getDefaultToolkit().getImage("rock.jpg"); //load the picture
 		rock1 = new Rock((int)(Math.random()*900)+1,(int)(Math.random()*600)+1);
         paperPic = Toolkit.getDefaultToolkit().getImage("paper.png"); //load the picture
@@ -113,10 +113,12 @@ public class BasicGameApp implements Runnable {
 	public void moveThings()
 	{
       //calls the move( ) code in the objects
-		rock1.move();
-        paper1.move();
-        scissors1.move();
-        crashing();
+        if (!gameOver) {
+            rock1.move();
+            paper1.move();
+            scissors1.move();
+            crashing();
+        }
 
 	}
     public void crashing() {
@@ -142,6 +144,19 @@ public class BasicGameApp implements Runnable {
             scissors1.height = 200;
             scissors1.width = 200;
         }
+
+        int aliveCount = 0;
+        if (rock1.isAlive) aliveCount++;
+        if (paper1.isAlive) aliveCount++;
+        if (scissors1.isAlive) aliveCount++;
+
+        if (aliveCount == 1) {
+            gameOver = true;
+            if (rock1.isAlive) winner = "ROCK";
+            if (paper1.isAlive) winner = "PAPER";
+            if (scissors1.isAlive) winner = "SCISSORS";
+        }
+
     }
 
 

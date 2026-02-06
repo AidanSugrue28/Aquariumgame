@@ -28,8 +28,8 @@ public class Scissors {
         ypos = pYpos;
         dx =5;
         dy =5;
-        width = 100;
-        height = 100;
+        width = 40;
+        height = 40;
         isAlive = true;
         hitbox = new Rectangle(xpos, ypos, width, height);
 
@@ -48,10 +48,10 @@ public class Scissors {
                 dy = -dy;
             }
 
-            if (xpos > 1000 - width) {
+            if (xpos > 900 - width) {
                 dx = -dx;
             }
-            if (ypos > 700 - height) {
+            if (ypos > 600 - height) {
                 dy = -dy;
             }
 
