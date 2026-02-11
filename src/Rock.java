@@ -28,8 +28,8 @@ public class Rock {
         ypos = pYpos;
         dx = 5;
         dy = 5;
-        width = 100;
-        height = 100;
+        width = 75;
+        height = 75;
         isAlive = true;
         hitbox = new Rectangle(xpos, ypos, width, height);
 
