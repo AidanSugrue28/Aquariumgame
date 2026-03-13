@@ -17,7 +17,7 @@ public class Sword {
     public Sword(int pXpos, int pYpos) {
         xpos = pXpos;
         ypos = pYpos;
-        dx = 5;
+        dx = 6;
         dy = 6;
         width = 100;
         height = 100;

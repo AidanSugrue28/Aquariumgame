@@ -161,8 +161,8 @@ public class BasicGameApp implements Runnable {
 
             swordTimer += 1 * FRAMES_PER_SECOND; // +1 second per kill
 
-            sword1.height = 150;
-            sword1.width = 150;
+            sword1.height = 140;
+            sword1.width = 140;
             sword1.dx = 15;
             sword1.dy = 15;
         }
