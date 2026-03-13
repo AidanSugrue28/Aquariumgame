@@ -18,7 +18,7 @@ public class Sword {
         xpos = pXpos;
         ypos = pYpos;
         dx = 5;
-        dy = 5;
+        dy = 6;
         width = 100;
         height = 100;
         isAlive = true;
