@@ -26,8 +26,8 @@ public class Rock {
     public Rock(int pXpos, int pYpos) {
         xpos = pXpos;
         ypos = pYpos;
-        dx = 5;
-        dy = 5;
+        dx = 6;
+        dy = 6;
         width = 75;
         height = 75;
         isAlive = true;
