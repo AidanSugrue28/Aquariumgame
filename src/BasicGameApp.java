@@ -116,8 +116,8 @@ public class BasicGameApp implements Runnable {
             System.out.println("Rock/paper hit");
             rock1.isAlive = false;
             paper1.isAlive = true;
-            paper1.height = 150;
-            paper1.width = 150;
+            paper1.height = 160;
+            paper1.width = 160;
             paper1.dx = 20;
             paper1.dy = 20;
         }
