@@ -1,24 +1,16 @@
-// ======================= Sword.java =======================
-// IMPORTANT: this makes the hitbox disappear when isAlive == false
-
 import java.awt.*;
 
 public class Sword {
 
-    public int xpos;
-    public int ypos;
-    public int dx;
-    public int dy;
-    public int width;
-    public int height;
+    public int xpos, ypos, dx, dy, width, height;
     public boolean isAlive;
     public Rectangle hitbox;
 
-    public Sword(int pXpos, int pYpos) {
-        xpos = pXpos;
-        ypos = pYpos;
-        dx = 6;
-        dy = 6;
+    public Sword(int x, int y) {
+        xpos = x;
+        ypos = y;
+        dx = 0; // controlled by player
+        dy = 0;
         width = 100;
         height = 100;
         isAlive = true;
@@ -26,23 +18,23 @@ public class Sword {
     }
 
     public void move() {
+
         if (isAlive) {
-
-            // simple bounce movement (same style as Rock/Paper)
-            if (xpos < 0) dx = -dx;
-            if (ypos < 0) dy = -dy;
-
-            if (xpos > 900 - width) dx = -dx;
-            if (ypos > 600 - height) dy = -dy;
 
             xpos += dx;
             ypos += dy;
 
+            // Keep inside screen
+            if (xpos < 0) xpos = 0;
+            if (xpos > 900) xpos = 900;
+
+            if (ypos < 0) ypos = 0;
+            if (ypos > 600) ypos = 600;
+
             hitbox = new Rectangle(xpos, ypos, width, height);
 
         } else {
-            // hitbox goes away when dead
-            hitbox = new Rectangle(0, 0, 0, 0);
+            hitbox = new Rectangle(0,0,0,0);
         }
     }
 }

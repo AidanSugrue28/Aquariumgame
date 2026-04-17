@@ -1,210 +1,161 @@
 // ======================= BasicGameApp.java =======================
-// Basic Game Application
-// Version 2
-// Rock / Paper / Scissors / Sword with win screen + sword timer (starts at game start)
-// Sword lasts 3 seconds, and every kill adds +1 second.
+// Rock Paper Scissors FINAL GAME
+// - Sword is player controlled (WASD)
+// - Mouse deletes enemies
+// - 3 lives system
+// - 10 second survival win condition
+// - Arrays + collisions + full interaction
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferStrategy;
 import java.awt.*;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import java.awt.event.*;
+import java.awt.image.BufferStrategy;
+import javax.swing.*;
 
-public class BasicGameApp implements Runnable {
+public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 
-    // Window size
     final int WIDTH = 1000;
     final int HEIGHT = 700;
 
-    // Graphics + window stuff
     public JFrame frame;
     public Canvas canvas;
     public JPanel panel;
     public BufferStrategy bufferStrategy;
 
     // Images
-    public Image rockPic;
-    public Image paperPic;
-    public Image scissorsPic;
-    public Image swordPic;
-    public Image backgroundPic;
-    public Image rockWinPic;
-    public Image paperWinPic;
-    public Image scissorsWinPic;
-    public Image swordWinPic;
+    public Image rockPic, paperPic, scissorsPic, swordPic, backgroundPic, swordWinPic;
 
-    // Game state
+    // ARRAYS
+    public Rock[] rocks = new Rock[5];
+    public Paper[] papers = new Paper[5];
+    public Scissors[] scissors = new Scissors[5];
+
+    // PLAYER
+    public Sword sword;
+
+    // GAME STATE
+    public int swordLives = 3;
+    public final int FPS = 50;
+    public int timer = 10 * FPS;
+
     public boolean gameOver = false;
-    public String winner   = "";
-
-    // ===== Sword timer settings =====
-    // You pause(20), so ~50 frames per second.
-    public final int FRAMES_PER_SECOND = 50;
-    public int swordTimer; // counts down in frames
-
-    // Game objects
-    public Rock rock1;
-    public Paper paper1;
-    public Scissors scissors1;
-    public Sword sword1;
+    public boolean swordWin = false;
 
     public static void main(String[] args) {
-        BasicGameApp ex = new BasicGameApp();
-        new Thread(ex).start();
+        new Thread(new BasicGameApp()).start();
     }
 
     public BasicGameApp() {
         setUpGraphics();
 
-        // Load pictures + create objects
+        // Load images
         rockPic = Toolkit.getDefaultToolkit().getImage("rock.jpg");
-        rock1 = new Rock((int)(Math.random()*700)+1,(int)(Math.random()*500)+1);
-
         paperPic = Toolkit.getDefaultToolkit().getImage("paper.png");
-        paper1 = new Paper((int)(Math.random()*700)+1,(int)(Math.random()*500)+1);
-
         scissorsPic = Toolkit.getDefaultToolkit().getImage("scissors.jpg");
-        scissors1 = new Scissors((int)(Math.random()*700)+1,(int)(Math.random()*500)+1);
-
         swordPic = Toolkit.getDefaultToolkit().getImage("sword.jpg");
-        sword1 = new Sword((int)(Math.random()*700)+1,(int)(Math.random()*500)+1);
-
         backgroundPic = Toolkit.getDefaultToolkit().getImage("Table.jpg");
-
-        rockWinPic = Toolkit.getDefaultToolkit().getImage("RockWinScreen.png");
-        paperWinPic = Toolkit.getDefaultToolkit().getImage("PaperWinScreen.png");
-        scissorsWinPic = Toolkit.getDefaultToolkit().getImage("ScissorsWinScreen.png");
         swordWinPic = Toolkit.getDefaultToolkit().getImage("SwordWinScreen.png");
 
-        // Sword timer starts immediately when game starts:
-        swordTimer = 3 * FRAMES_PER_SECOND; // 3 seconds
+        // Create enemies
+        for (int i = 0; i < rocks.length; i++) {
+            rocks[i] = new Rock((int)(Math.random()*900), (int)(Math.random()*600));
+        }
+
+        for (int i = 0; i < papers.length; i++) {
+            papers[i] = new Paper((int)(Math.random()*900), (int)(Math.random()*600));
+        }
+
+        for (int i = 0; i < scissors.length; i++) {
+            scissors[i] = new Scissors((int)(Math.random()*900), (int)(Math.random()*600));
+        }
+
+        sword = new Sword(400, 300);
+
+        canvas.addKeyListener(this);
+        canvas.addMouseListener(this);
     }
 
     public void run() {
         while (true) {
-            moveThings();
+            if (!gameOver) {
+                moveThings();
+                collisions();
+                updateTimer();
+            }
             render();
             pause(20);
         }
     }
 
+    // ================= MOVE =================
     public void moveThings() {
-        if (!gameOver) {
+        sword.move();
 
-            // Move characters
-            rock1.move();
-            paper1.move();
-            scissors1.move();
-            sword1.move();
+        for (Rock r : rocks) r.move();
+        for (Paper p : papers) p.move();
+        for (Scissors s : scissors) s.move();
+    }
 
-            // Sword timer countdown (starts at game start)
-            if (sword1.isAlive) {
-                swordTimer--;
-                if (swordTimer <= 0) {
-                    sword1.isAlive = false; // stops drawing; hitbox should go away in Sword.move()
-                }
+    // ================= COLLISIONS =================
+    public void collisions() {
+
+        // Sword loses lives on contact
+        for (Rock r : rocks) {
+            if (r.isAlive && sword.hitbox.intersects(r.hitbox)) {
+                r.isAlive = false;
+                swordLives--;
             }
-
-            // Collisions
-            crashing();
-        }
-    }
-
-    public void crashing() {
-        // Rock / Paper / Scissors interactions
-        if (paper1.hitbox.intersects(rock1.hitbox) && rock1.isAlive == true) {
-            System.out.println("Rock/paper hit");
-            rock1.isAlive = false;
-            paper1.isAlive = true;
-            paper1.height = 160;
-            paper1.width = 160;
-            paper1.dx = 20;
-            paper1.dy = 20;
         }
 
-        if (rock1.hitbox.intersects(scissors1.hitbox) && scissors1.isAlive == true) {
-            System.out.println("Rock/scissors hit");
-            scissors1.isAlive = false;
-            rock1.isAlive = true;
-            rock1.height = 150;
-            rock1.width = 150;
-            rock1.dx = 2;
-            rock1.dy = 2;
+        for (Paper p : papers) {
+            if (p.isAlive && sword.hitbox.intersects(p.hitbox)) {
+                p.isAlive = false;
+                swordLives--;
+            }
         }
 
-        if (scissors1.hitbox.intersects(paper1.hitbox) && paper1.isAlive == true) {
-            System.out.println("scissors/paper hit");
-            paper1.isAlive = false;
-            scissors1.isAlive = true;
-            scissors1.height = 150;
-            scissors1.width = 150;
-            scissors1.dx = 30;
-            scissors1.dy = 30;
+        for (Scissors s : scissors) {
+            if (s.isAlive && sword.hitbox.intersects(s.hitbox)) {
+                s.isAlive = false;
+                swordLives--;
+            }
         }
 
-        // Sword kills + each kill adds +1 second to sword lifetime
-        if (sword1.hitbox.intersects(rock1.hitbox) && rock1.isAlive == true && sword1.isAlive == true) {
-            System.out.println("sword/rock hit");
-            rock1.isAlive = false;
+        // RPS logic
+        for (Rock r : rocks)
+            for (Scissors s : scissors)
+                if (r.isAlive && s.isAlive && r.hitbox.intersects(s.hitbox))
+                    s.isAlive = false;
 
-            swordTimer += 1 * FRAMES_PER_SECOND; // +1 second per kill
+        for (Scissors s : scissors)
+            for (Paper p : papers)
+                if (s.isAlive && p.isAlive && s.hitbox.intersects(p.hitbox))
+                    p.isAlive = false;
 
-            sword1.height = 150;
-            sword1.width = 150;
-            sword1.dx = 15;
-            sword1.dy = 15;
-        }
+        for (Paper p : papers)
+            for (Rock r : rocks)
+                if (p.isAlive && r.isAlive && p.hitbox.intersects(r.hitbox))
+                    r.isAlive = false;
 
-        if (sword1.hitbox.intersects(scissors1.hitbox) && scissors1.isAlive == true && sword1.isAlive == true) {
-            System.out.println("sword/scissors hit");
-            scissors1.isAlive = false;
-
-            swordTimer += 1 * FRAMES_PER_SECOND; // +1 second per kill
-
-            sword1.height = 140;
-            sword1.width = 140;
-            sword1.dx = 15;
-            sword1.dy = 15;
-        }
-
-        if (sword1.hitbox.intersects(paper1.hitbox) && paper1.isAlive == true && sword1.isAlive == true) {
-            System.out.println("sword/paper hit");
-            paper1.isAlive = false;
-
-            swordTimer += 1 * FRAMES_PER_SECOND; // +1 second per kill
-
-            sword1.height = 150;
-            sword1.width = 150;
-            sword1.dx = 15;
-            sword1.dy = 15;
-        }
-
-        // Win condition
-        int aliveCount = 0;
-        if (rock1.isAlive) aliveCount++;
-        if (paper1.isAlive) aliveCount++;
-        if (scissors1.isAlive) aliveCount++;
-        if (sword1.isAlive) aliveCount++;
-
-        if (aliveCount == 1) {
+        // Lose condition
+        if (swordLives <= 0) {
             gameOver = true;
-            if (rock1.isAlive) winner = "ROCK";
-            if (paper1.isAlive) winner = "PAPER";
-            if (scissors1.isAlive) winner = "SCISSORS";
-            if (sword1.isAlive) winner = "SWORD";
+            sword.isAlive = false;
         }
     }
 
-    public void pause(int time) {
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            // ignore
+    // ================= TIMER =================
+    public void updateTimer() {
+        timer--;
+
+        if (timer <= 0) {
+            gameOver = true;
+            swordWin = true;
         }
     }
 
+    // ================= GRAPHICS =================
     private void setUpGraphics() {
-        frame = new JFrame("Application Template");
+        frame = new JFrame("Rock Paper Scissors");
 
         panel = (JPanel) frame.getContentPane();
         panel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -212,65 +163,101 @@ public class BasicGameApp implements Runnable {
 
         canvas = new Canvas();
         canvas.setBounds(0, 0, WIDTH, HEIGHT);
-        canvas.setIgnoreRepaint(true);
 
         panel.add(canvas);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        frame.setResizable(false);
         frame.setVisible(true);
 
         canvas.createBufferStrategy(2);
         bufferStrategy = canvas.getBufferStrategy();
         canvas.requestFocus();
-
-        System.out.println("DONE graphic setup");
     }
 
     private void render() {
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
-        // Background
         g.drawImage(backgroundPic, 0, 0, WIDTH, HEIGHT, null);
 
-        // Draw characters if alive
-        if (rock1.isAlive == true) {
-            g.drawImage(rockPic, rock1.xpos, rock1.ypos, rock1.width, rock1.height, null);
-        }
-        if (paper1.isAlive == true) {
-            g.drawImage(paperPic, paper1.xpos, paper1.ypos, paper1.width, paper1.height, null);
-        }
-        if (scissors1.isAlive == true) {
-            g.drawImage(scissorsPic, scissors1.xpos, scissors1.ypos, scissors1.width, scissors1.height, null);
-        }
-        if (sword1.isAlive == true) {
-            g.drawImage(swordPic, sword1.xpos, sword1.ypos, sword1.width, sword1.height, null);
-        }
+        // Sword
+        if (sword.isAlive)
+            g.drawImage(swordPic, sword.xpos, sword.ypos, sword.width, sword.height, null);
 
-        // Optional: show sword time left so teacher can SEE it working
-        g.setFont(new Font("Arial", Font.BOLD, 20));
-        int secondsLeft = Math.max(0, swordTimer / FRAMES_PER_SECOND);
-        g.drawString("Sword time: " + secondsLeft, 20, 40);
+        // Enemies
+        for (Rock r : rocks)
+            if (r.isAlive)
+                g.drawImage(rockPic, r.xpos, r.ypos, r.width, r.height, null);
 
-        // Win screen images
+        for (Paper p : papers)
+            if (p.isAlive)
+                g.drawImage(paperPic, p.xpos, p.ypos, p.width, p.height, null);
+
+        for (Scissors s : scissors)
+            if (s.isAlive)
+                g.drawImage(scissorsPic, s.xpos, s.ypos, s.width, s.height, null);
+
+        // UI
+        g.setFont(new Font("Arial", Font.BOLD, 22));
+        g.drawString("Lives: " + swordLives, 20, 40);
+        g.drawString("Time: " + (timer / FPS), 20, 70);
+
+        // END SCREEN
         if (gameOver) {
-            if (winner.equals("ROCK")) {
-                g.drawImage(rockWinPic, 250, 200, 500, 200, null);
-            }
-            if (winner.equals("PAPER")) {
-                g.drawImage(paperWinPic, 250, 200, 500, 200, null);
-            }
-            if (winner.equals("SCISSORS")) {
-                g.drawImage(scissorsWinPic, 250, 200, 500, 200, null);
-            }
-            if (winner.equals("SWORD")) {
+            if (swordWin) {
                 g.drawImage(swordWinPic, 250, 200, 500, 200, null);
+            } else {
+                g.setFont(new Font("Arial", Font.BOLD, 50));
+                g.drawString("GAME OVER", 330, 350);
             }
         }
 
         g.dispose();
         bufferStrategy.show();
+    }
+
+    // ================= INPUT =================
+    public void keyPressed(KeyEvent e) {
+        int key = e.getKeyCode();
+
+        if (key == KeyEvent.VK_W) sword.dy = -5;
+        if (key == KeyEvent.VK_S) sword.dy = 5;
+        if (key == KeyEvent.VK_A) sword.dx = -5;
+        if (key == KeyEvent.VK_D) sword.dx = 5;
+    }
+
+    public void keyReleased(KeyEvent e) {
+        sword.dx = 0;
+        sword.dy = 0;
+    }
+
+    public void keyTyped(KeyEvent e) {}
+
+    // Mouse deletes enemies
+    public void mouseClicked(MouseEvent e) {
+        int mx = e.getX();
+        int my = e.getY();
+
+        for (Rock r : rocks)
+            if (r.hitbox.contains(mx, my))
+                r.isAlive = false;
+
+        for (Paper p : papers)
+            if (p.hitbox.contains(mx, my))
+                p.isAlive = false;
+
+        for (Scissors s : scissors)
+            if (s.hitbox.contains(mx, my))
+                s.isAlive = false;
+    }
+
+    public void mousePressed(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+
+    public void pause(int time) {
+        try { Thread.sleep(time); } catch (Exception e) {}
     }
 }
