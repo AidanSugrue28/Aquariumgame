@@ -1,10 +1,4 @@
 // ======================= BasicGameApp.java =======================
-// Rock Paper Scissors FINAL GAME
-// - Sword is player controlled (WASD)
-// - Mouse deletes enemies
-// - 3 lives system
-// - 10 second survival win condition
-// - Arrays + collisions + full interaction
 
 import java.awt.*;
 import java.awt.event.*;
@@ -24,21 +18,24 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     // Images
     public Image rockPic, paperPic, scissorsPic, swordPic, backgroundPic, swordWinPic;
 
-    // ARRAYS
+    // array
     public Rock[] rocks = new Rock[5];
     public Paper[] papers = new Paper[5];
     public Scissors[] scissors = new Scissors[5];
 
-    // PLAYER
+
     public Sword sword;
 
-    // GAME STATE
-    public int swordLives = 3;
+
+    public int swordLives = 5;
     public final int FPS = 50;
     public int timer = 10 * FPS;
 
     public boolean gameOver = false;
     public boolean swordWin = false;
+
+    // Restart button
+    Rectangle restartButton = new Rectangle(WIDTH - 220, 20, 200, 50);
 
     public static void main(String[] args) {
         new Thread(new BasicGameApp()).start();
@@ -86,7 +83,7 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         }
     }
 
-    // ================= MOVE =================
+    // move
     public void moveThings() {
         sword.move();
 
@@ -95,14 +92,14 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         for (Scissors s : scissors) s.move();
     }
 
-    // ================= COLLISIONS =================
+    // collisions
     public void collisions() {
 
-        // Sword loses lives on contact
         for (Rock r : rocks) {
             if (r.isAlive && sword.hitbox.intersects(r.hitbox)) {
                 r.isAlive = false;
                 swordLives--;
+                sword.gotHit();
             }
         }
 
@@ -110,6 +107,7 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
             if (p.isAlive && sword.hitbox.intersects(p.hitbox)) {
                 p.isAlive = false;
                 swordLives--;
+                sword.gotHit();
             }
         }
 
@@ -117,10 +115,11 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
             if (s.isAlive && sword.hitbox.intersects(s.hitbox)) {
                 s.isAlive = false;
                 swordLives--;
+                sword.gotHit();
             }
         }
 
-        // RPS logic
+
         for (Rock r : rocks)
             for (Scissors s : scissors)
                 if (r.isAlive && s.isAlive && r.hitbox.intersects(s.hitbox))
@@ -136,14 +135,13 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
                 if (p.isAlive && r.isAlive && p.hitbox.intersects(r.hitbox))
                     r.isAlive = false;
 
-        // Lose condition
         if (swordLives <= 0) {
             gameOver = true;
             sword.isAlive = false;
         }
     }
 
-    // ================= TIMER =================
+    // timer
     public void updateTimer() {
         timer--;
 
@@ -153,7 +151,30 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         }
     }
 
-    // ================= GRAPHICS =================
+    // reset
+    public void resetGame() {
+
+        swordLives = 5;
+        timer = 10 * FPS;
+        gameOver = false;
+        swordWin = false;
+
+        sword = new Sword(400, 300);
+
+        for (int i = 0; i < rocks.length; i++) {
+            rocks[i] = new Rock((int)(Math.random()*900), (int)(Math.random()*600));
+        }
+
+        for (int i = 0; i < papers.length; i++) {
+            papers[i] = new Paper((int)(Math.random()*900), (int)(Math.random()*600));
+        }
+
+        for (int i = 0; i < scissors.length; i++) {
+            scissors[i] = new Scissors((int)(Math.random()*900), (int)(Math.random()*600));
+        }
+    }
+
+    // graphics
     private void setUpGraphics() {
         frame = new JFrame("Rock Paper Scissors");
 
@@ -181,11 +202,9 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 
         g.drawImage(backgroundPic, 0, 0, WIDTH, HEIGHT, null);
 
-        // Sword
         if (sword.isAlive)
             g.drawImage(swordPic, sword.xpos, sword.ypos, sword.width, sword.height, null);
 
-        // Enemies
         for (Rock r : rocks)
             if (r.isAlive)
                 g.drawImage(rockPic, r.xpos, r.ypos, r.width, r.height, null);
@@ -209,22 +228,31 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
                 g.drawImage(swordWinPic, 250, 200, 500, 200, null);
             } else {
                 g.setFont(new Font("Arial", Font.BOLD, 50));
-                g.drawString("GAME OVER", 331, 350);
+                g.drawString("GAME OVER", 330, 350);
             }
+
+            // Restart button
+            g.setColor(Color.WHITE);
+            g.fillRect(restartButton.x, restartButton.y, restartButton.width, restartButton.height);
+
+            g.setColor(Color.BLACK);
+            g.drawRect(restartButton.x, restartButton.y, restartButton.width, restartButton.height);
+            g.setFont(new Font("Arial", Font.BOLD, 16));
+            g.drawString("Click to Restart", restartButton.x + 25, restartButton.y + 30);
         }
 
         g.dispose();
         bufferStrategy.show();
     }
 
-    // ================= INPUT =================
+
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
 
-        if (key == KeyEvent.VK_W) sword.dy = -5;
-        if (key == KeyEvent.VK_S) sword.dy = 5;
-        if (key == KeyEvent.VK_A) sword.dx = -5;
-        if (key == KeyEvent.VK_D) sword.dx = 5;
+        if (key == KeyEvent.VK_W) sword.dy = -sword.speed;
+        if (key == KeyEvent.VK_S) sword.dy = sword.speed;
+        if (key == KeyEvent.VK_A) sword.dx = -sword.speed;
+        if (key == KeyEvent.VK_D) sword.dx = sword.speed;
     }
 
     public void keyReleased(KeyEvent e) {
@@ -234,25 +262,34 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 
     public void keyTyped(KeyEvent e) {}
 
-    // Mouse deletes enemies
-    public void mouseClicked(MouseEvent e) {
+    // mouse
+    public void mousePressed(MouseEvent e) {
+
+        // Restart click
+        if (gameOver && restartButton.contains(e.getX(), e.getY())) {
+            resetGame();
+            return;
+        }
+
         int mx = e.getX();
         int my = e.getY();
 
-        for (Rock r : rocks)
-            if (r.hitbox.contains(mx, my))
-                r.isAlive = false;
+        sword.xpos = mx - sword.width / 2;
+        sword.ypos = my - sword.height / 2;
 
-        for (Paper p : papers)
-            if (p.hitbox.contains(mx, my))
-                p.isAlive = false;
+        if (sword.xpos < 0) sword.xpos = 0;
+        if (sword.xpos > WIDTH - sword.width) sword.xpos = WIDTH - sword.width;
 
-        for (Scissors s : scissors)
-            if (s.hitbox.contains(mx, my))
-                s.isAlive = false;
+        if (sword.ypos < 0) sword.ypos = 0;
+        if (sword.ypos > HEIGHT - sword.height) sword.ypos = HEIGHT - sword.height;
+
+        sword.dx = 0;
+        sword.dy = 0;
+
+        sword.hitbox = new Rectangle(sword.xpos, sword.ypos, sword.width, sword.height);
     }
 
-    public void mousePressed(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {}
     public void mouseReleased(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
