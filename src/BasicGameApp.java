@@ -209,7 +209,7 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
                 g.drawImage(swordWinPic, 250, 200, 500, 200, null);
             } else {
                 g.setFont(new Font("Arial", Font.BOLD, 50));
-                g.drawString("GAME OVER", 330, 350);
+                g.drawString("GAME OVER", 331, 350);
             }
         }
 

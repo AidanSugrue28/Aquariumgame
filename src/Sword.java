@@ -11,7 +11,7 @@ public class Sword {
         ypos = y;
         dx = 0; // controlled by player
         dy = 0;
-        width = 100;
+        width = 101;
         height = 100;
         isAlive = true;
         hitbox = new Rectangle(xpos, ypos, width, height);
