@@ -154,7 +154,7 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     // reset
     public void resetGame() {
 
-        swordLives = 5;
+        swordLives = 3;
         timer = 10 * FPS;
         gameOver = false;
         swordWin = false;
