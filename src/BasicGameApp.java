@@ -27,7 +27,7 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     public Sword sword;
 
 
-    public int swordLives = 5;
+    public int swordLives = 3;
     public final int FPS = 50;
     public int timer = 10 * FPS;
 
@@ -35,7 +35,7 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     public boolean swordWin = false;
 
     // Restart button
-    Rectangle restartButton = new Rectangle(WIDTH - 220, 20, 200, 50);
+    Rectangle restartButton = new Rectangle(780, 20, 200, 100);
 
     public static void main(String[] args) {
         new Thread(new BasicGameApp()).start();
@@ -238,7 +238,7 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
             g.setColor(Color.BLACK);
             g.drawRect(restartButton.x, restartButton.y, restartButton.width, restartButton.height);
             g.setFont(new Font("Arial", Font.BOLD, 16));
-            g.drawString("Click to Restart", restartButton.x + 25, restartButton.y + 30);
+            g.drawString("Click to Restart", restartButton.x + 40, restartButton.y + 50);
         }
 
         g.dispose();
@@ -287,6 +287,9 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         sword.dy = 0;
 
         sword.hitbox = new Rectangle(sword.xpos, sword.ypos, sword.width, sword.height);
+
+        timer += 2 * FPS; //when you teleport, it adds two seconds to the timer
+
     }
 
     public void mouseClicked(MouseEvent e) {}

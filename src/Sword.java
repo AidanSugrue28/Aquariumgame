@@ -45,13 +45,13 @@ public class Sword {
 
     // called when sword gets hit
     public void gotHit() {
-        width -= 10;
-        height -= 10;
+        width -= 15;
+        height -= 15;
 
 
         if (width < 20) width = 20;
         if (height < 20) height = 20;
 
-        speed += 1; // gets faster every hit
+        speed += 3; // gets faster every hit
     }
 }
